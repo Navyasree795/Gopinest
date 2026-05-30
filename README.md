@@ -1,73 +1,140 @@
-# Welcome to your Lovable project
+# SmartStay Hub - Room Finding Web Application
 
-## Project info
+SmartStay Hub is a comprehensive MERN stack (MongoDB, Express.js, React, Node.js) application designed to simplify the process of finding and listing rental rooms. It connects landlords with potential tenants through a user-friendly interface.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+![Project Status](https://img.shields.io/badge/Status-Active-success)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
-## How can I edit this code?
+## 🌟 Features
 
-There are several ways of editing your application.
+### For Users (Tenants)
+- **Advanced Search:** Filter rooms by city, location, room type, tenant type, and rent range.
+- **Room Details:** View detailed information, amenities, and high-quality images.
+- **Contact Owners:** Send messages directly to room owners.
+- **Responsive Design:** Seamless experience across desktop and mobile devices.
 
-**Use Lovable**
+### For Owners (Landlords)
+- **Easy Listing:** Post room ads with photos, descriptions, and rental details.
+- **Management:** View and manage your listed properties.
+- **Real-time Notifications:** Receive updates via Socket.IO when users contact you.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+### For Admins
+- **Dashboard:** Overview of system statistics.
+- **Content Moderation:** Approve or reject room listings to ensure quality.
+- **User Management:** Manage user roles and accounts.
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠 Technologies Used
 
-**Use your preferred IDE**
+- **Frontend:** React (Vite), TypeScript, Tailwind CSS, Shadcn UI, React Query, React Router DOM.
+- **Backend:** Node.js, Express.js, Socket.IO.
+- **Database:** MongoDB (with fallback to In-Memory MongoDB for testing).
+- **Authentication:** JWT (JSON Web Tokens) with Access & Refresh Token rotation.
+- **Image Upload:** Multer.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 📂 Project Structure
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+smartstay-hub/
+├── backend/                # Node.js + Express Backend
+│   ├── config/             # Database configuration
+│   ├── controllers/        # Route logic
+│   ├── middleware/         # Auth & Error handling
+│   ├── models/             # Mongoose Models
+│   ├── routes/             # API Routes
+│   ├── uploads/            # Static image uploads
+│   └── server.js           # Entry point
+├── src/                    # React Frontend
+│   ├── components/         # Reusable UI components
+│   ├── context/            # Auth & Global State
+│   ├── hooks/              # Custom React Hooks
+│   ├── lib/                # API & Utilities
+│   ├── pages/              # Application Pages
+│   └── App.tsx             # Main Component
+├── public/                 # Static assets
+├── .env                    # Frontend Environment Variables
+└── package.json            # Project dependencies
 ```
 
-**Edit a file directly in GitHub**
+## 🚀 Installation & Setup
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Prerequisites
+- Node.js (v18+ recommended)
+- MongoDB (Optional: The app falls back to an in-memory database if MongoDB is not running locally).
 
-**Use GitHub Codespaces**
+### 1. Clone the Repository
+```bash
+git clone <repository-url>
+cd smartstay-hub
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### 2. Backend Setup
+Navigate to the backend folder and install dependencies:
+```bash
+cd backend
+npm install
+```
 
-## What technologies are used for this project?
+Create a `.env` file in the `backend/` directory (or ensure the root `.env` values are accessible):
+```env
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/smartstay-hub
+JWT_SECRET=your_jwt_secret
+JWT_ACCESS_EXPIRE=1h
+JWT_REFRESH_EXPIRE_SECONDS=604800
+MOCK_OTP=123456
+FRONTEND_URL=http://localhost:8080
+UPLOAD_FOLDER=uploads
+NODE_ENV=development
+```
 
-This project is built with:
+### 3. Frontend Setup
+Navigate to the root directory and install dependencies:
+```bash
+cd ..
+npm install
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+Ensure the root `.env` file is configured:
+```env
+VITE_API_BASE_URL=/api
+VITE_SOCKET_URL=http://localhost:5000
+VITE_FRONTEND_URL=http://localhost:8080
+```
 
-## How can I deploy this project?
+## 🏃‍♂️ How to Run
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+You need to run both the backend and frontend servers.
 
-## Can I connect a custom domain to my Lovable project?
+### 1. Start Backend
+Open a terminal:
+```bash
+cd backend
+npm start
+```
+*The server will run on `http://localhost:5000`. If local MongoDB is not found, it will start an in-memory database.*
 
-Yes, you can!
+### 2. Start Frontend
+Open a **new** terminal:
+```bash
+npm run dev
+```
+*The application will run on `http://localhost:8080`.*
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🔑 Key API Endpoints
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| **POST** | `/api/auth/send-otp` | Send mock OTP (Default: 123456) |
+| **POST** | `/api/auth/verify-otp` | Login/Register with OTP |
+| **GET** | `/api/rooms/search` | Search rooms with filters |
+| **GET** | `/api/rooms/:id` | Get room details |
+| **POST** | `/api/rooms/add` | Add a new room (Auth required) |
+
+## 🔮 Future Improvements
+- [x] Integration with Firebase Phone Authentication for secure login.
+- [ ] Map integration for visual location search.
+- [ ] Payment gateway for booking deposits.
+- [ ] Advanced chat features between owners and tenants.
+
+## ✍️ Author
+**SmartStay Team**

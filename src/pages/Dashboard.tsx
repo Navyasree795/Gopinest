@@ -84,7 +84,7 @@ const Dashboard = () => {
             Welcome to SmartStay
           </h1>
           <p className="text-muted-foreground">
-            Hello, +91 {user?.phone}
+            Hello, +91 {user?.mobile}
           </p>
         </div>
 

@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MapPin, IndianRupee, Users, Search } from "lucide-react";
+import { MapPin, IndianRupee, Users, Search, CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 import PageHeader from "@/components/PageHeader";
 
 const cities = [
@@ -28,15 +32,20 @@ const FindRoom = () => {
   const [location, setLocation] = useState("");
   const [budget, setBudget] = useState([5000, 25000]);
   const [tenantType, setTenantType] = useState("any");
+  const [entryDate, setEntryDate] = useState<Date>();
+  const [vacateDate, setVacateDate] = useState<Date>();
 
   const handleSearch = () => {
-    const params = new URLSearchParams({
-      city,
-      location,
-      minBudget: budget[0].toString(),
-      maxBudget: budget[1].toString(),
-      tenantType,
-    });
+    const params = new URLSearchParams();
+    if (city) params.append("city", city);
+    if (location) params.append("location", location);
+    params.append("minRent", budget[0].toString());
+    params.append("maxRent", budget[1].toString());
+    
+    let mappedTenantType = tenantType;
+    if (tenantType === "working") mappedTenantType = "working professional";
+    params.append("tenantType", mappedTenantType);
+
     navigate(`/rooms?${params.toString()}`);
   };
 
@@ -108,6 +117,70 @@ const FindRoom = () => {
                 <span className="font-medium text-foreground">
                   ₹{budget[1].toLocaleString()}
                 </span>
+              </div>
+            </div>
+
+            {/* Entry Date & Vacate Date */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <CalendarIcon size={16} className="text-primary" />
+                  Entry Date
+                </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full h-12 justify-start text-left font-normal",
+                        !entryDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {entryDate ? format(entryDate, "PPP") : "Pick date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={entryDate}
+                      onSelect={setEntryDate}
+                      disabled={(date) => date < new Date()}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <CalendarIcon size={16} className="text-primary" />
+                  Vacate Date
+                </Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "w-full h-12 justify-start text-left font-normal",
+                        !vacateDate && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {vacateDate ? format(vacateDate, "PPP") : "Pick date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={vacateDate}
+                      onSelect={setVacateDate}
+                      disabled={(date) => date < (entryDate || new Date())}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 
